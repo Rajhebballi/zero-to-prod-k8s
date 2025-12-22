@@ -1,0 +1,42 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:15
+    container_name: postgres-db
+    restart: always
+    environment:
+      POSTGRES_USER: uptime_user
+      POSTGRES_PASSWORD: uptime_pass
+      POSTGRES_DB: uptime_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  app:
+    build: ./app          # 🔴 THIS IS THE KEY FIX
+    image: uptime-app
+    container_name: uptime-app
+    restart: always
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: uptime_db
+      DB_USER: uptime_user
+      DB_PASSWORD: uptime_pass
+    ports:
+      - "8081:8080"
+
+  edge:
+    build: ./edge
+    container_name: nginx-edge
+    depends_on:
+      - app
+    ports:
+      - "8082:80"
+
+volumes:
+  postgres_data:

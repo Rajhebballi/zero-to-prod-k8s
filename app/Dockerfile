@@ -11,8 +11,14 @@ COPY tests tests
 
 RUN pytest
 
+
 # 2️⃣ Runtime stage (skinny image)
 FROM python:3.11-slim
+
+# install curl FOR HEALTHCHECK (IMPORTANT)
+RUN apt-get update \
+    && apt-get install -y curl \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
@@ -26,6 +32,7 @@ COPY src src
 
 EXPOSE 8080
 
-HEALTHCHECK CMD curl --fail http://localhost:8080/health || exit 1
+HEALTHCHECK --interval=10s --timeout=3s --retries=3 \
+  CMD curl --fail http://localhost:8080/health || exit 1
 
 CMD ["python", "src/app.py"]
