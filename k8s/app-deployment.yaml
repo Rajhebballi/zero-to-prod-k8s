@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: uptime-app
+  namespace: uptime-dev
+  labels:
+    app: uptime-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: uptime-app
+  template:
+    metadata:
+      labels:
+        app: uptime-app
+    spec:
+      containers:
+        - name: uptime-app
+          image: uptime-app
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 10
+
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 5
