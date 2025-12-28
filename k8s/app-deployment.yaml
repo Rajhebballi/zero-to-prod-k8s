@@ -19,14 +19,26 @@ spec:
         - name: uptime-app
           image: uptime-app
           imagePullPolicy: IfNotPresent
-          # Added envFrom here
           envFrom:
             - configMapRef:
                 name: uptime-app-config
+            - configMapRef:
+                name: app-config
             - secretRef:
                 name: uptime-app-secret
+            - secretRef:
+                name: db-secret
           ports:
             - containerPort: 8080
+          
+          # Resource management for the container
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "256Mi"
 
           livenessProbe:
             httpGet:
