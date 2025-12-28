@@ -8,11 +8,11 @@ import time
 app = Flask(__name__)
 
 # Read DB config from environment variables
-DB_HOST = os.getenv("DB_HOST", "localhost")
-DB_PORT = os.getenv("DB_PORT", "5432")
-DB_NAME = os.getenv("DB_NAME", "uptime_db")
-DB_USER = os.getenv("DB_USER", "uptime_user")
-DB_PASSWORD = os.getenv("DB_PASSWORD", "uptime_pass")
+DB_HOST = os.environ["DB_HOST"]
+DB_PORT = os.environ["DB_PORT"]
+DB_NAME = os.environ["DB_NAME"]
+DB_USER = os.environ["DB_USER"]
+DB_PASSWORD = os.environ["DB_PASSWORD"]
 
 
 def get_db_connection():

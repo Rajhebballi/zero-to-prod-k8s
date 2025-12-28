@@ -19,6 +19,12 @@ spec:
         - name: uptime-app
           image: uptime-app
           imagePullPolicy: IfNotPresent
+          # Added envFrom here
+          envFrom:
+            - configMapRef:
+                name: uptime-app-config
+            - secretRef:
+                name: uptime-app-secret
           ports:
             - containerPort: 8080
 
