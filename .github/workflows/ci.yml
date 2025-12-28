@@ -2,13 +2,16 @@ name: Uptime App CI
 
 on:
   push:
-    branches:
-      - main
+    branches: [ "main" ]
   pull_request:
 
 jobs:
-  test-build:
+  test-build-push:
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write   # REQUIRED for GHCR
 
     steps:
       - name: Checkout code
@@ -20,15 +23,23 @@ jobs:
           python-version: "3.11"
 
       - name: Install dependencies
+        working-directory: app
         run: |
-          cd app
           pip install -r requirements.txt
 
       - name: Run tests
+        working-directory: app
         run: |
-          cd app
           pytest
 
-      - name: Build Docker image
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
         run: |
-          docker build -t uptime-app ./app
+          docker build -t ghcr.io/rajhebballi/uptime-app:latest ./app
+          docker push ghcr.io/rajhebballi/uptime-app:latest
